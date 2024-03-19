@@ -13,7 +13,6 @@ def load_model(name:str):
     "model": members[name.lower()],
   }
 
-
 if __name__ == "__main__":
   Tensor.training = False
   Tensor.no_grad = True
