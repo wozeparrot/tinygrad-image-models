@@ -1,0 +1,5 @@
+.direnv/
+__pycache__/
+cache/*.pth*
+cache/*.bin
+weights/*.safetensors
