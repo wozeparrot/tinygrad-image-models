@@ -131,6 +131,8 @@ class GhostNetV2(Model):
     x = x.flatten(1)
     return self.classifier(x)
 
+def preprocess(x:Tensor) -> Tensor: return x.div(255)
+
 if __name__ == "__main__":
   from tinygrad.nn.state import torch_load, safe_save, get_state_dict, get_parameters, load_state_dict
   from tinygrad import dtypes
@@ -147,7 +149,7 @@ if __name__ == "__main__":
 
   state_dict = torch_load(args.input)
   for key in list(state_dict.keys()):
-    if "num_batches_tracked" in key: state_dict[key] = Tensor([state_dict[key].numpy().item()], dtype=dtypes.default_float)
+    if "num_batches_tracked" in key: state_dict[key] = Tensor([state_dict[key].item()], dtype=dtypes.default_float)
 
   for param in get_parameters(state_dict):
     param.replace(param.cast(dtypes.float32)).realize()
