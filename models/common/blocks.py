@@ -1,18 +1,24 @@
 from tinygrad import Tensor, nn, dtypes
 from tinygrad.nn import Conv2d
 
+# can reshape before the batchnorm so it can work on 1d tensors
+class BatchNorm1d(nn.BatchNorm2d):
+  def __init__(self, dim:int, eps=1e-5): super().__init__(dim, eps)
+  def __call__(self, x:Tensor) -> Tensor: return super().__call__(x.reshape(-1, x.shape[-1], 1, 1).float()).cast(dtypes.default_float).reshape(x.shape)
+
 class BatchNorm2d(nn.BatchNorm2d):
   def __init__(self, dim:int, eps=1e-5): super().__init__(dim, eps)
   def __call__(self, x:Tensor) -> Tensor: return super().__call__(x.float()).cast(dtypes.default_float)
 
-def make_divisible(x:float, divisible_by:int) -> int:
-  return int(x + divisible_by / 2) // divisible_by * divisible_by
+def make_divisible(x:float, divisible_by:int, round_limit=0.9) -> int:
+  new_x = int(x + divisible_by / 2) // divisible_by * divisible_by
+  return new_x + divisible_by if new_x < round_limit * x else new_x
 
 def hardsigmoid(x:Tensor) -> Tensor: return (x + 3).relu6() / 6
 
 class SE:
-  def __init__(self, dim:int, se_ratio=0.25, gate=Tensor.sigmoid):
-    reduced = make_divisible(dim * se_ratio, 4)
+  def __init__(self, dim:int, se_ratio=0.25, se_divisor=4, gate=Tensor.sigmoid):
+    reduced = make_divisible(dim * se_ratio, se_divisor)
     self.conv_reduce = Conv2d(dim, reduced, kernel_size=1)
     self.conv_expand = Conv2d(reduced, dim, kernel_size=1)
     self.gate = gate
