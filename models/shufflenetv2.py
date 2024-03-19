@@ -78,7 +78,7 @@ class ShuffleNetV2(Model):
     x3 = x2.sequential(self.stage3)
     x4 = x3.sequential(self.stage4)
     x5 = x4.sequential(self.stage5)
-    return [x, x2, x3, x4, x5]
+    return [x2, x3, x4, x5]
 
   def forward_head(self, xl: list[Tensor]) -> Tensor:
     x = xl[-1].mean((2, 3)).flatten(1)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
   state_dict = torch_load(args.input)["state_dict"]
   # modify state_dict to match our model
   for key in list(state_dict.keys()):
-    if "num_batches_tracked" in key: state_dict[key] = Tensor([state_dict[key].numpy().item()], dtype=dtypes.default_float)
+    if "num_batches_tracked" in key: state_dict[key] = Tensor([state_dict[key].item()], dtype=dtypes.default_float)
   for key in list(state_dict.keys()):
     if "first_conv" in key:
       state_dict[key.replace("first_conv", "stage1")] = state_dict[key]
