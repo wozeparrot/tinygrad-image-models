@@ -1,4 +1,3 @@
-import math
 from tinygrad import Tensor, nn, dtypes
 from tinygrad.nn import Conv2d
 

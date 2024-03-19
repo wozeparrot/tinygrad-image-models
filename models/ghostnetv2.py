@@ -1,5 +1,5 @@
 import math
-from tinygrad import Tensor, Device
+from tinygrad import Tensor
 from tinygrad.nn import Conv2d, Linear
 
 from .common.blocks import BatchNorm2d, SE, upsample_to_size, hardsigmoid
