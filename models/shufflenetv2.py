@@ -2,6 +2,7 @@ from typing import Tuple
 from tinygrad import Tensor, Device, dtypes
 from tinygrad.nn import Conv2d, Linear
 from .common.blocks import BatchNorm2d
+from .common.model import Model
 
 def channel_shuffle(x: Tensor) -> Tuple[Tensor, Tensor]:
   b, c, h, w = x.shape
@@ -46,8 +47,10 @@ class ShuffleV2Block:
     x = self.bn3(self.cv3(x)).relu()
     return x_proj.cat(x, dim=1)
 
-class ShuffleNetV2:
+class ShuffleNetV2(Model):
   def __init__(self, classes:int=1000, size:str="0.5"):
+    super().__init__(classes, size)
+
     stage_repeats = [4, 8, 4]
     match size:
       case "0.5": stage_out_channels = [24, 48, 96, 192, 1024]
@@ -69,13 +72,16 @@ class ShuffleNetV2:
     if size == "2.0":
       self.classifier.insert(0, lambda x: x.dropout(0.2))
 
-  def __call__(self, x: Tensor) -> Tensor:
+  def forward_features(self, x: Tensor) -> list[Tensor]:
     x = x.sequential(self.stage1).pad2d((1, 1, 1, 1)).max_pool2d(3, 2)
     x2 = x.sequential(self.stage2)
     x3 = x2.sequential(self.stage3)
     x4 = x3.sequential(self.stage4)
     x5 = x4.sequential(self.stage5)
-    x = x5.mean((2, 3)).reshape(x.shape[0], -1)
+    return [x, x2, x3, x4, x5]
+
+  def forward_head(self, xl: list[Tensor]) -> Tensor:
+    x = xl[-1].mean((2, 3)).flatten(1)
     return x.sequential(self.classifier)
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ from tinygrad import Tensor
 from tinygrad.nn import Conv2d, Linear
 
 from .common.blocks import BatchNorm2d, SE, upsample_to_size, hardsigmoid
+from .common.model import Model
 
 class GhostModuleV2:
   def __init__(self, inp, oup, kernel_size=1, ratio=2, dw_size=3, stride=1, relu=True, attn=False):
@@ -77,8 +78,10 @@ class ConvBnAct:
     self.bn1 = BatchNorm2d(cout)
   def __call__(self, x:Tensor) -> Tensor: return self.bn1(self.conv(x)).relu()
 
-class GhostNetV2:
+class GhostNetV2(Model):
   def __init__(self, classes:int=1000, size:str="1.0"):
+    super().__init__(classes, size)
+
     self.conv_stem = Conv2d(3, 16, 3, 2, 1, bias=False)
     self.bn1 = BatchNorm2d(16)
 
@@ -113,14 +116,18 @@ class GhostNetV2:
 
     self.conv_head = Conv2d(960, 1280, 1, 1, 0)
     self.classifier = Linear(1280, classes)
-  def __call__(self, x: Tensor) -> Tensor:
+
+  def forward_features(self, x: Tensor) -> list[Tensor]:
     x = self.bn1(self.conv_stem(x)).relu()
-
-    for block in self.blocks:
+    features = []
+    for i, block in enumerate(self.blocks):
       x = x.sequential(block)
+      if i == len(self.blocks) - 1 or block[0].stride != 2: features.append(x)
+    return features
 
+  def forward_head(self, xl: list[Tensor]) -> Tensor:
+    x = self.conv_head(xl[-1]).relu()
     x = x.mean((2, 3), keepdim=True)
-    x = self.conv_head(x).relu()
     x = x.flatten(1)
     return self.classifier(x)
 
