@@ -37,7 +37,7 @@ if __name__ == "__main__":
   img = Image.open(args.input)
   img = img.resize((224, 224))
   img = img.convert("RGB")
-  imgt = Tensor(np.array(img)).float().unsqueeze(0).permute(0, 3, 1, 2).realize()
+  imgt = Tensor(np.array(img)).float().unsqueeze(0).permute(0, 3, 1, 2).contiguous().realize()
 
   # run inference
   out = run(imgt)
