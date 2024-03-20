@@ -16,3 +16,9 @@ Mostly targeting models trained on Imagenet-1k, and other models that are fast o
 
 - [ ] For models that can be reparameterized, add that functionality
 - [ ] Training
+
+## License
+
+See [LICENSE](/LICENSE).
+
+Certain parts of the code are adapted from the original implementations, but they should all be under permissive licenses.
