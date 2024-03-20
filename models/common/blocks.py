@@ -1,6 +1,8 @@
 from tinygrad import Tensor, nn, dtypes
 from tinygrad.nn import Conv2d
 
+# *** layers ***
+
 # can reshape before the batchnorm so it can work on 1d tensors
 class BatchNorm1d(nn.BatchNorm2d):
   def __init__(self, dim:int, eps=1e-5): super().__init__(dim, eps)
@@ -9,12 +11,6 @@ class BatchNorm1d(nn.BatchNorm2d):
 class BatchNorm2d(nn.BatchNorm2d):
   def __init__(self, dim:int, eps=1e-5): super().__init__(dim, eps)
   def __call__(self, x:Tensor) -> Tensor: return super().__call__(x.float()).cast(dtypes.default_float)
-
-def make_divisible(x:float, divisible_by:int, round_limit=0.9) -> int:
-  new_x = int(x + divisible_by / 2) // divisible_by * divisible_by
-  return new_x + divisible_by if new_x < round_limit * x else new_x
-
-def hardsigmoid(x:Tensor) -> Tensor: return (x + 3).relu6() / 6
 
 class SE:
   def __init__(self, dim:int, se_ratio=0.25, se_divisor=4, gate=Tensor.sigmoid):
@@ -28,6 +24,17 @@ class SE:
     xx = self.gate(self.conv_expand(xx))
     return x * xx
 
+# *** activations ***
+
+def hardsigmoid(x:Tensor) -> Tensor: return (x + 3).relu6() / 6
+
+# *** utils ***
+
+def make_divisible(x:float, divisible_by:int, round_limit=0.9) -> int:
+  new_x = int(x + divisible_by / 2) // divisible_by * divisible_by
+  return new_x + divisible_by if new_x < round_limit * x else new_x
+
+# nearest neighbor upsample
 def upsample(x:Tensor, scale:int):
   bs, c, py, px = x.shape
   return x.reshape(bs, c, py, 1, px, 1).expand(bs, c, py, scale, px, scale).reshape(bs, c, py * scale, px * scale)
