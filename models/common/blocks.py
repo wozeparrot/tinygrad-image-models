@@ -1,5 +1,5 @@
 from tinygrad import Tensor, nn, dtypes
-from tinygrad.nn import Conv2d
+from tinygrad.nn import Conv2d, Linear
 
 # *** layers ***
 
@@ -10,6 +10,10 @@ class BatchNorm1d(nn.BatchNorm2d):
 
 class BatchNorm2d(nn.BatchNorm2d):
   def __init__(self, dim:int, eps=1e-5): super().__init__(dim, eps)
+  def __call__(self, x:Tensor) -> Tensor: return super().__call__(x.float()).cast(dtypes.default_float)
+
+class LayerNorm2d(nn.LayerNorm2d):
+  def __init__(self, shape:int | tuple[int, ...], eps=1e-5): super().__init__(shape, eps)
   def __call__(self, x:Tensor) -> Tensor: return super().__call__(x.float()).cast(dtypes.default_float)
 
 class SE:
@@ -27,7 +31,13 @@ class SE:
 class LayerScale2d:
   def __init__(self, dim:int, init_value:float=1e-5):
     self.gamma = Tensor.full((dim, 1, 1), init_value)
-  def __call__(self, x:Tensor) -> Tensor: return x * self.gamma
+  def __call__(self, x:Tensor) -> Tensor: return x * self.gamma.reshape(1, -1, 1, 1)
+
+class SLClassifierHead:
+  def __init__(self, dim:int, classes:int):
+    self.fc = Linear(dim, classes)
+  def __call__(self, x:Tensor) -> Tensor: return self.fc(x.mean((2, 3)))
+
 
 # *** activations ***
 

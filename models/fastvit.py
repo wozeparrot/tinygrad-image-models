@@ -1,8 +1,8 @@
 # TODO: add support for the variants with attention and not just repmixer
 
 from tinygrad import Tensor, dtypes
-from tinygrad.nn import Conv2d, Linear
-from .common.blocks import BatchNorm2d, SE, LayerScale2d
+from tinygrad.nn import Conv2d
+from .common.blocks import BatchNorm2d, SE, LayerScale2d, SLClassifierHead
 from .common.model import ModelReparam
 
 def num_groups(group_size, channels):
@@ -96,11 +96,6 @@ class FastVitStage:
     if hasattr(self, "downsample"): x = self.downsample(x)
     return x.sequential(self.blocks)
 
-class ClassifierHead:
-  def __init__(self, dim:int, classes:int):
-    self.fc = Linear(dim, classes)
-  def __call__(self, x:Tensor) -> Tensor: return self.fc(x.mean((2, 3)))
-
 class FastVit(ModelReparam):
   def __init__(self, classes:int=1000, size:str="t8"):
     super().__init__(classes, size)
@@ -118,7 +113,7 @@ class FastVit(ModelReparam):
       in_dim = embed_dims[i]
     self.final_conv = MobileOneBlock(embed_dims[-1], embed_dims[-1] * 2, kernel_size=3, stride=1, group_size=1, use_se=True, num_conv_branches=1)
 
-    self.head = ClassifierHead(embed_dims[-1] * 2, classes)
+    self.head = SLClassifierHead(embed_dims[-1] * 2, classes)
 
   def forward_features(self, x:Tensor) -> list[Tensor]:
     x = x.sequential(self.stem)
