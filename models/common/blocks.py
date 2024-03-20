@@ -24,6 +24,11 @@ class SE:
     xx = self.gate(self.conv_expand(xx))
     return x * xx
 
+class LayerScale2d:
+  def __init__(self, dim:int, init_value:float=1e-5):
+    self.gamma = Tensor.full((dim, 1, 1), init_value)
+  def __call__(self, x:Tensor) -> Tensor: return x * self.gamma
+
 # *** activations ***
 
 def hardsigmoid(x:Tensor) -> Tensor: return (x + 3).relu6() / 6

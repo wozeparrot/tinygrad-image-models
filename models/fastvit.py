@@ -2,7 +2,7 @@
 
 from tinygrad import Tensor, dtypes
 from tinygrad.nn import Conv2d, Linear
-from .common.blocks import BatchNorm2d, SE
+from .common.blocks import BatchNorm2d, SE, LayerScale2d
 from .common.model import ModelReparam
 
 def num_groups(group_size, channels):
@@ -60,11 +60,6 @@ class PatchEmbed:
       MobileOneBlock(embed_dim, embed_dim, kernel_size=1, stride=1),
     ]
   def __call__(self, x:Tensor) -> Tensor: return x.sequential(self.proj)
-
-class LayerScale2d:
-  def __init__(self, dim:int):
-    self.gamma = Tensor.full((dim, 1, 1), 1e-5)
-  def __call__(self, x:Tensor) -> Tensor: return x * self.gamma
 
 class RepMixer:
   def __init__(self, dim):
