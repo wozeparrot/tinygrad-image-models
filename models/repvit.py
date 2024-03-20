@@ -1,5 +1,4 @@
-from typing import Tuple
-from tinygrad import Tensor, Device, dtypes
+from tinygrad import Tensor, dtypes
 from tinygrad.nn import Conv2d, Linear
 from .common.blocks import BatchNorm1d, BatchNorm2d, SE
 from .common.model import ModelReparam
