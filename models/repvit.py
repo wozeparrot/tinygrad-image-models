@@ -70,6 +70,7 @@ class RepVitClassifier:
     self.head = LinearNorm(embed_dim, classes)
     self.head_dist = LinearNorm(embed_dim, classes)
   def __call__(self, x:Tensor) -> Tensor:
+    x = x.mean((2, 3))
     x1 = self.head(x)
     x2 = self.head_dist(x)
     return (x1 + x2) / 2
@@ -106,8 +107,7 @@ class RepVit(ModelReparam):
     return features
 
   def forward_head(self, xl: list[Tensor]) -> Tensor:
-    x = xl[-1].mean((2, 3))
-    return self.head(x)
+    return self.head(xl[-1])
 
 def preprocess(x:Tensor) -> Tensor: return x.div(255)
 
