@@ -6,11 +6,11 @@ Mostly targeting models trained on Imagenet-1k, and other models that are fast o
 
 ## Models
 
-- ShuffleNetV2 - [paper](https://arxiv.org/abs/1807.11164) [code](/models/shufflenetv2.py)
-- GhostNetV2 - [paper](https://arxiv.org/abs/2211.12905) [code](/models/ghostnetv2.py)
-- FocalNet - [paper](https://arxiv.org/abs/2203.11926) [code](/models/focalnet.py)
-- FastViT - [paper](https://arxiv.org/abs/2303.14189) [code](/models/fastvit.py)
-- RepViT - [paper](https://arxiv.org/abs/2307.09283) [code](/models/repvit.py)
+- ShuffleNetV2 - [paper](https://arxiv.org/abs/1807.11164) [code](/tgim/models/shufflenetv2.py)
+- GhostNetV2 - [paper](https://arxiv.org/abs/2211.12905) [code](/tgim/models/ghostnetv2.py)
+- FocalNet - [paper](https://arxiv.org/abs/2203.11926) [code](/tgim/models/focalnet.py)
+- FastViT - [paper](https://arxiv.org/abs/2303.14189) [code](/tgim/models/fastvit.py)
+- RepViT - [paper](https://arxiv.org/abs/2307.09283) [code](/tgim/models/repvit.py)
 
 ## TODO
 
