@@ -1,12 +1,14 @@
 from tinygrad import Tensor, TinyJit, GlobalCounters
 from tinygrad.helpers import fetch
 from tinygrad.nn.state import load_state_dict, safe_load
-import argparse, importlib, inspect, time, ast
+import argparse, importlib, inspect, time, ast, sys
+from pathlib import Path
 from PIL import Image
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
 def load_model(name:str):
-  members = inspect.getmembers(importlib.import_module(f"models.{name}"))
+  members = inspect.getmembers(importlib.import_module(f"tgim.models.{name}"))
   members = {k.lower(): v for k, v in members}
   return {
     "preprocess": members.get("preprocess", lambda x: x),
@@ -22,7 +24,7 @@ if __name__ == "__main__":
   parser.add_argument("--classes", type=int, default=1000, help="number of classes")
   parser.add_argument("--size", type=str, required=True, help="size of model")
   parser.add_argument("--weights", type=str, required=True, help="path to model weights")
-  parser.add_argument("--input", type=str, default="./chicken.jpg", help="path to input image")
+  parser.add_argument("--input", type=str, default=str(Path(__file__).parent / "chicken.jpg"), help="path to input image")
   args = parser.parse_args()
 
   # load model

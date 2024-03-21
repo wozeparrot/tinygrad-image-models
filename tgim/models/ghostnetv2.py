@@ -2,8 +2,8 @@ import math
 from tinygrad import Tensor
 from tinygrad.nn import Conv2d, Linear
 
-from .common.blocks import BatchNorm2d, SE, upsample_to_size, hardsigmoid
-from .common.model import Model
+from ..common.blocks import BatchNorm2d, SE, upsample_to_size, hardsigmoid
+from ..common.model import Model
 
 class GhostModuleV2:
   def __init__(self, inp, oup, kernel_size=1, ratio=2, dw_size=3, stride=1, relu=True, attn=False):

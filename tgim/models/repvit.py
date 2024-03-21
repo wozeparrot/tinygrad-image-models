@@ -1,7 +1,7 @@
 from tinygrad import Tensor, dtypes
 from tinygrad.nn import Conv2d, Linear
-from .common.blocks import BatchNorm1d, BatchNorm2d, SE
-from .common.model import ModelReparam
+from ..common.blocks import BatchNorm1d, BatchNorm2d, SE
+from ..common.model import ModelReparam
 
 class ConvNorm:
   def __init__(self, in_channels:int, out_channels:int, kernel_size:int, stride:int, padding:int, groups:int=1):

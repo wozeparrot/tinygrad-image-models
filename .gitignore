@@ -3,3 +3,7 @@ __pycache__/
 cache/*.pth*
 cache/*.bin
 weights/*.safetensors
+result
+
+tgim.egg-info/
+dist/

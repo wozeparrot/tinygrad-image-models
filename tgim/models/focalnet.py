@@ -1,7 +1,7 @@
 from tinygrad import Tensor, dtypes
 from tinygrad.nn import Conv2d
-from .common.blocks import LayerNorm2d, SLClassifierHead
-from .common.model import Model
+from ..common.blocks import LayerNorm2d, SLClassifierHead
+from ..common.model import Model
 
 class Downsample:
   def __init__(self, cin:int, cout:int, stride:int=4):

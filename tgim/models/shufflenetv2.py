@@ -1,8 +1,8 @@
 from typing import Tuple
 from tinygrad import Tensor, Device, dtypes
 from tinygrad.nn import Conv2d, Linear
-from .common.blocks import BatchNorm2d
-from .common.model import Model
+from ..common.blocks import BatchNorm2d
+from ..common.model import Model
 
 def channel_shuffle(x: Tensor) -> Tuple[Tensor, Tensor]:
   b, c, h, w = x.shape

@@ -2,8 +2,8 @@
 
 from tinygrad import Tensor, dtypes
 from tinygrad.nn import Conv2d
-from .common.blocks import BatchNorm2d, SE, LayerScale2d, SLClassifierHead
-from .common.model import ModelReparam
+from ..common.blocks import BatchNorm2d, SE, LayerScale2d, SLClassifierHead
+from ..common.model import ModelReparam
 
 def num_groups(group_size, channels):
   if not group_size: return 1
