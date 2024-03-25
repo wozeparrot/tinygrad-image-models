@@ -48,8 +48,8 @@ class ShuffleV2Block:
     return x_proj.cat(x, dim=1)
 
 class ShuffleNetV2(Model):
-  def __init__(self, classes:int=1000, size:str="0.5"):
-    super().__init__(classes, size)
+  def __init__(self, cin:int=3, classes:int=1000, size:str="0.5"):
+    super().__init__(cin, classes, size)
 
     stage_repeats = [4, 8, 4]
     match size:
@@ -59,7 +59,7 @@ class ShuffleNetV2(Model):
       case "2.0": stage_out_channels = [24, 244, 488, 976, 2048]
       case _: raise ValueError(f"Invalid size: {size}")
 
-    self.stage1 = [Conv2d(3, stage_out_channels[0], 3, 2, 1, bias=False), BatchNorm2d(stage_out_channels[0]), Tensor.relu]
+    self.stage1 = [Conv2d(cin, stage_out_channels[0], 3, 2, 1, bias=False), BatchNorm2d(stage_out_channels[0]), Tensor.relu]
     self.stage2 = [ShuffleV2Block(stage_out_channels[0], stage_out_channels[1], stage_out_channels[1] // 2, kernel_size=3, stride=2)]
     self.stage2 += [ShuffleV2Block(stage_out_channels[1] // 2, stage_out_channels[1], stage_out_channels[1] // 2, 3, 1) for _ in range(stage_repeats[0] - 1)]
     self.stage3 = [ShuffleV2Block(stage_out_channels[1], stage_out_channels[2], stage_out_channels[2] // 2, kernel_size=3, stride=2)]
